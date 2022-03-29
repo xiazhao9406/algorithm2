@@ -3,121 +3,89 @@ package com.xiazhao.algorithms;
 import java.util.*;
 
 public class BinaryTreeTraversal {
-    //recursion
-    public void preOrder(TreeNode node) {
-        if (node == null)
-            return;
-        System.out.println();
-        preOrder(node.left);
-        preOrder(node.right);
+    public static void preOrder(TreeNode node, Visitor visitor) {
+        if (node == null) return;
+        visitor.visit(node);
+        preOrder(node.left, visitor);
+        preOrder(node.right, visitor);
     }
-    /* If need to return a list, add a parameter list to helper function.
-    eg. public List<> preOrder(node)
-        public void helper(node, list)
-     */
 
-    //non recursion
-    public void preOrder2(TreeNode node) {
+    public static void preOrderNonRecursive(TreeNode node, Visitor visitor) {
         Stack<TreeNode> stack = new Stack<>();
-        stack.push(node);//压栈
+        stack.push(node);
         while (!stack.empty()) {
-            TreeNode t1 = stack.pop();//出栈
-            System.out.println(t1.val);
-            if (t1.right != null) {
-                stack.push(t1.right);
-            }
-            if (t1.left != null) {
-                stack.push(t1.left);
-            }
+            TreeNode treeNode = stack.pop();
+            visitor.visit(treeNode);
+            if (treeNode.right != null) stack.push(treeNode.right);
+            if (treeNode.left != null) stack.push(treeNode.left);
         }
     }
 
-    //recursion
-    public void inOrder(TreeNode node) {
-        if (node == null) {
-            return;
-        }
-        inOrder(node.left);
-        System.out.println(node.val);
-        inOrder(node.right);
+    public static void inOrder(TreeNode node, Visitor visitor) {
+        if (node == null) return;
+        inOrder(node.left, visitor);
+        visitor.visit(node);
+        inOrder(node.right, visitor);
     }
 
-    //no recursion using a stack
-    public void inOrder2(TreeNode node) {
+    public static void inOrderNonRecursive(TreeNode node, Visitor visitor) {
         Stack<TreeNode> stack = new Stack<>();
-        while (node != null || !stack.isEmpty()) {
-            while (node != null) {
-                stack.push(node);
-                node = node.left;
+        TreeNode treeNode = node;
+        while (treeNode != null || !stack.isEmpty()) {
+            while (treeNode != null) {
+                stack.push(treeNode);
+                treeNode = treeNode.left;
             }
             if (!stack.isEmpty()) {
-                node = stack.pop();
-                System.out.println(node.val);
-                node = node.right;
+                treeNode = stack.pop();
+                visitor.visit(treeNode);
+                treeNode = treeNode.right;
             }
         }
     }
 
-    //recursion
-    public void postOrder(TreeNode node) {
-        if (node == null) {
-            return;
-        }
-        postOrder(node.left);
-        postOrder(node.right);
-        System.out.println(node.val);
+    public static void postOrder(TreeNode node, Visitor visitor) {
+        if (node == null) return;
+        postOrder(node.left, visitor);
+        postOrder(node.right, visitor);
+        visitor.visit(node);
     }
 
-    //no recursion
-    public void postOrder2(TreeNode node) {
-        if (node != null) {
-            Stack<TreeNode> s1 = new Stack<>();
-            Stack<TreeNode> s2 = new Stack<>();
-            s1.push(node);
-            while (!s1.isEmpty()) {
-                node = s1.pop();
-                s2.push(node);
-                if (node.left != null) {
-                    s1.push(node.left);
-                }
-
-                if (node.right != null) {
-                    s1.push(node.right);
-                }
-            }
-
-            while (!s2.isEmpty()) {
-                System.out.println(s2.pop().val);
-            }
+    public static void postOrderNonRecursive(TreeNode node, Visitor visitor) {
+        if (node == null) return;
+        Stack<TreeNode> s1 = new Stack<>();
+        Stack<TreeNode> s2 = new Stack<>();
+        s1.push(node);
+        while (!s1.isEmpty()) {
+            TreeNode treeNode = s1.pop();
+            s2.push(treeNode);
+            if (treeNode.left != null) s1.push(treeNode.left);
+            if (treeNode.right != null) s1.push(treeNode.right);
         }
+        while (!s2.isEmpty()) visitor.visit(s2.pop());
     }
 
-    //tree level traversal
-    public List<List<Integer>> levelOrder(TreeNode root) {
-
-        if (root == null)
-            return new ArrayList<>();
-
+    public static List<List<Integer>> levelOrder(TreeNode root, Visitor visitor) {
+        if (root == null) return new ArrayList<>();
         Queue<TreeNode> queue = new LinkedList<>();
         List<List<Integer>> res = new ArrayList<>();
-
         queue.add(root);
         while (!queue.isEmpty()) {
-
             int levelNum = queue.size();
-
             List<Integer> subList = new ArrayList<>();
             for (int i = 0; i < levelNum; i++) {
                 TreeNode node = queue.poll();
                 subList.add(node.val);
-
-                if (node.left != null)
-                    queue.add(node.left);
-                if (node.right != null)
-                    queue.add(node.right);
+                visitor.visit(node);
+                if (node.left != null) queue.add(node.left);
+                if (node.right != null) queue.add(node.right);
             }
             res.add(subList);
         }
         return res;
+    }
+
+    public interface Visitor {
+        void visit(TreeNode treeNode);
     }
 }
