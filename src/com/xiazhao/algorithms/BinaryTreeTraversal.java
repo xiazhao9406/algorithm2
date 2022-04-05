@@ -3,6 +3,9 @@ package com.xiazhao.algorithms;
 import java.util.*;
 
 public class BinaryTreeTraversal {
+    /**
+     * lc112. Path Sum: https://leetcode.com/submissions/detail/672561492/
+     */
     public static void preOrder(TreeNode node, Visitor visitor) {
         if (node == null) return;
         visitor.visit(node);
@@ -10,6 +13,9 @@ public class BinaryTreeTraversal {
         preOrder(node.right, visitor);
     }
 
+    /**
+     * lc112. Path Sum: https://leetcode.com/submissions/detail/672566440/
+     */
     public static void preOrderNonRecursive(TreeNode node, Visitor visitor) {
         Stack<TreeNode> stack = new Stack<>();
         stack.push(node);
